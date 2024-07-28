@@ -17,7 +17,10 @@ export class GifsService {
   private apiKey: string = 'MNKPfuuXHwv8hLUsWByjAG8juzyToank';
   private url = 'https://api.giphy.com/v1/gifs';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.loadLocalStorage();
+
+  }
 
   // Método getter para obtener el historial de tags
   get tagHistory(): string[] {
@@ -38,6 +41,17 @@ export class GifsService {
     if (this._tagHistory.length > 10) {
       this._tagHistory.pop();
     }
+    this.saveLocalStorage()
+  }
+  //guardar los tags de busquedas en el local storage
+  private saveLocalStorage():void {
+    localStorage.setItem('history', JSON.stringify(this._tagHistory) )
+  }
+  //obtener los tags del localStorage
+  private loadLocalStorage(){
+    if(!localStorage.getItem('history')) return;
+    this._tagHistory = JSON.parse(localStorage.getItem('history')!)
+    this.searchTag(this._tagHistory[0]);
   }
 
   // Método para buscar un tag y organizar el historial
@@ -49,7 +63,6 @@ export class GifsService {
       .set('api_key', this.apiKey)
       .set('limit', 10)
       .set('q', tag)
-
 
     this.http.get<SearchResponse>(`${this.url}/search`, { params }).subscribe(resp => {
       this.gifsList = resp.data;
