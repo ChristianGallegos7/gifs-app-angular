@@ -1,1 +1,5 @@
-export const environment = {};
+export const environment = {
+  production: false,
+  companyName: 'Gifs',
+  companySlogan: 'Maneja tus Gifs',
+};
